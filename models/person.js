@@ -4,6 +4,10 @@ const url = process.env.MONGODB_URI
 
 console.log('connecting to', url)
 
+const phoneNumberValidator = (val) => {
+  return !(val.indexOf(`-`) > -1 && val.length <9) && /^(\d{2,3}-\d{5,})$|^\d{8,}$/.test(val)
+}
+
 mongoose.connect(url)
   .then(result => {
     console.log('connected to MongoDB')
@@ -20,9 +24,13 @@ const peopleSchema = new mongoose.Schema({
   },
   number: {
     type: String,
+    validate: phoneNumberValidator,
     required: true
   },
-  date: Date,
+  date: {
+    type: Date,
+    required: true
+  },
 })
 
 peopleSchema.set('toJSON', {
