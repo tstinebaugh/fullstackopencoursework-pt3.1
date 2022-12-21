@@ -11,7 +11,7 @@ app.use(cors())
 
 app.use(express.static('build'))
 
-morgan.token('params', function(req, res) {
+morgan.token('params', function(req, _) { // eslint-disable-line no-unused-vars
   return JSON.stringify(req.body)
 })
 
@@ -44,14 +44,14 @@ app.get('/api/persons/:id', (request, response, next) => {
       response.json(person)
     } else {
         response.status(404).end()
-    }  
+    }
   })
   .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -59,10 +59,10 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  
+
   if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'params "name" or "number" missing' 
+    return response.status(400).json({
+      error: 'params "name" or "number" missing'
     })
   }
 
@@ -71,7 +71,7 @@ app.post('/api/persons', (request, response, next) => {
     number: body.number,
     date: new Date(),
   })
-  
+
   person.save().then(savedPerson => {
     response.json(savedPerson)
   })
@@ -87,7 +87,7 @@ app.put('/api/persons/:id', (request, response, next) => {
   }
 
   Person.findByIdAndUpdate(
-    request.params.id, person, 
+    request.params.id, person,
     { new: true, runValidators: true, context: 'query' })
     .then(updated => {
       response.json(updated)
